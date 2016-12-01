@@ -51,14 +51,14 @@ e.g., fields[0] is the c_ip in the log_tcp_complete while fields[6] is the Hostn
 It must use a python-like syntax and must return a Boolean value.
 
 ## 3.1 Examples
-### 4.1.3 Log lines to Facebook
+### 3.1.1 Log lines to Facebook
 To select all the lines in the tcp_complete log where the FQDN is `www.facebook.com`, you can type:
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
 spark-submit  --master yarn-client advanced_query.py -i $path -o "facebook_flows" \
               --query="fqdn=='www.facebook.com'"
 ```
-### 4.1.3 HTTP requests to port 7547
+### 3.1.2 HTTP requests to port 7547
 To select all the urls on server port 7547, you can use:
 ```
 path='.../2016_11_27_*/log_http_complete.gz'
