@@ -111,6 +111,8 @@ spark-submit --master yarn-client advanced_query.py -i $path -o "domain_rank" \
              --filter= "method == 'HTTP' and int(fields[7])>5000" --map="c_ip" \
              --distinct
 ```
+Please note that so far, the tool uses the first line of each log as header line.
+Thus, to get the fields in the HTTP response lines, you must use the indexed access with fields variable.
 ### 4.1.2 Server IPs contacted with QUIC protocol
 This query creates the list of Server IP address that are contacted using the QUIC protocol over UDP.
 ```
