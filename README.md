@@ -23,7 +23,7 @@ Please download locally this tool with this command line:
 git clone https://github.com/marty90/tstat_spark_miner
 ```
 
-## 3. Running an simple query
+## 3. Running a simple query
 A simple query is the easiest operation you can do on log files.
 It takes as input a set of log files and selects a subset of the lines to be written as output using a configurable filter.
 The syntax is as follows:
@@ -48,7 +48,7 @@ optional arguments:
 The query argument can be any combination of column names of the selected log file such as: c_ip, s_ip, fqdn, c_pkts_all, etc...
 It must use a python-like syntax and must return a Boolean value
 
-# 3.1 Examples
+### 3.1 Examples
 To select all the lines in the tcp_complete log where the FQDN is `www.facebook.com`, you can type:
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
@@ -66,6 +66,9 @@ Please note that all fields are strings. If you want to evaluate them as integer
 
 ## 4. Running an advanced query
 This kind of query is more complex than the previous one since it includes a filter a map and a reduce stage.
-Three kinds of 
+Three kinds of workflows are allowed.
+* Filter -> Map -> Distinct
+* Filter -> Map -> Reduce
+* Filter -> Map -> ReduceByKey ( -> Map)
 
 
