@@ -103,11 +103,19 @@ optional arguments:
 ```
 
 ## 4.1 Examples
+### 4.1.1 Clients downloading large HTTP files
+With this command line you get the list of client IP addresses downloading files larger than 1MB
+```
+path='.../2016_11_27_*/log_http_complete.gz'
+spark-submit --master yarn-client advanced_query.py -i $path -o "domain_rank" \
+             --filter= "method == 'HTTP' and int(fields[7])>5000" --map="c_ip" \
+             --distinct
+```
 ### 4.1.2 Server IPs contacted with QUIC protocol
 This query creates the list of Server IP address that are contacted using the QUIC protocol over UDP.
 ```
 path='.../2016_11_27_*/log_udp_complete.gz'
-spark-submit --master yarn-client advanced_query.py -i $path -o "domain_rank" \
+spark-submit --master yarn-client advanced_query.py -i $path -o "quic_s_ip" \
              --filter="c_type=='27' and s_type=='27'" --map="s_ip" \
              --distinct
 ```
@@ -115,7 +123,7 @@ spark-submit --master yarn-client advanced_query.py -i $path -o "domain_rank" \
 This example counts how many flow are directed to each domain (FQDN).
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
-spark-submit --master yarn-client advanced_query.py -i $path -o "domain_rank" \
+spark-submit --master yarn-client advanced_query.py -i $path -o "domain_pop" \
              --filter="fqdn!='-'" --map="(fqdn,1)" \
              --reduceByKey="v1+v2"
 ```
