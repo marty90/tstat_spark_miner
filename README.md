@@ -71,4 +71,22 @@ Three kinds of workflows are allowed.
 * Filter -> Map -> Reduce
 * Filter -> Map -> ReduceByKey ( -> Map)
 
+### 4.1 Examples
+#### 4.1.3 Domain Popularity
+This example counts how many flow are directed to each domain (FQDN).
+```
+path='.../2016_11_27_*/log_tcp_complete.gz'
+spark-submit --master yarn-client advanced_query.py -i $path -o "domain_rank" \
+             --filter="fqdn!='-'" --map="(fqdn,1)" \
+             --reduceByKey="v1+v2"
+```
 
+#### 4.1.4 Domain Rank
+This examples calculates the rank of the domain names in the log. The rank is the number of users (source IP addresses)
+accessing a domain.
+```
+path='.../2016_11_27_*/log_tcp_complete.gz'
+spark-submit --master yarn-client advanced_query.py -i $path -o "domain_rank" \
+             --filter="fqdn!='-'" --map="(fqdn,{c_ip})" \
+             --reduceByKey="v1|v2" --finalMap="k + ' ' + str(len(v))"
+```
