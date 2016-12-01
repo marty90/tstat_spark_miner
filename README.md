@@ -28,9 +28,6 @@ A simple query is the easiest operation you can do on log files.
 It takes as input a set of log files and selects a subset of the lines to be written as output using a configurable filter.
 The syntax is as follows:
 ```
-path='hdfs://BigDataHA/data/DET/PDF/2016/11*/2016_11_27_*/log_tcp_complete.gz'
- spark-submit --master yarn-client advanced_query.py -i $path -o "prova_rank" \
-              --query="fqdn=='www.facebook.com'"
 ```
 The query argument can be any combination of column names of the selected log file such as: c_ip, s_ip, fqdn, c_pkts_all, etc...
 It must use a python-like syntax and must return a Boolean value
@@ -38,7 +35,18 @@ It must use a python-like syntax and must return a Boolean value
 # 3.1 Examples
 To select all the lines in the tcp_complete log where the FQDN is `www.facebook.com`, you can type:
 ```
+path='.../2016_11_27_*/log_tcp_complete.gz'
+spark-submit  --master yarn-client advanced_query.py -i $path -o "facebook_flows" \
+              --query="fqdn=='www.facebook.com'"
 ```
+
+To select all the urls on server port 7547, you can use:
+```
+path='.../2016_11_27_*/log_http_complete.gz'
+spark-submit  --master yarn-client advanced_query.py -i $path -o "port_7547" \
+              --query="s_port=='7547'"
+```
+Please note that all fields are strings. If you want to evaluate them as integer or float, you must explicitely convert them.
 
 ## 4. Running an advanced query
 This kind of query is more complex than the previous one since it includes a filter a map and a reduce stage.
