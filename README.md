@@ -22,6 +22,9 @@ Please download locally this tool with this command line:
 ```
 git clone https://github.com/marty90/tstat_spark_miner
 ```
+You must run this Spark application with the spark-submit tool.
+Please rember to set the `--master` option in the correct way;
+it can be yarn-client or yarn-cluster. Note that when using yarn-cluster, you cannot copy files on your local machine.
 
 # 3. Running a simple query
 A simple query is the easiest operation you can do on log files.
@@ -55,14 +58,14 @@ It must use a python-like syntax and must return a Boolean value.
 To select all the lines in the tcp_complete log where the FQDN is `www.facebook.com`, you can type:
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
-spark-submit  --master yarn-client advanced_query.py -i $path -o "facebook_flows" \
+spark-submit  --master yarn-cluster advanced_query.py -i $path -o "facebook_flows" \
               --query="fqdn=='www.facebook.com'"
 ```
 ### 3.1.2 HTTP requests to port 7547
 To select all the urls on server port 7547, you can use:
 ```
 path='.../2016_11_27_*/log_http_complete.gz'
-spark-submit  --master yarn-client advanced_query.py -i $path -o "port_7547" \
+spark-submit  --master yarn-cluster advanced_query.py -i $path -o "port_7547" \
               --query="s_port=='7547'"
 ```
 Please note that all fields are strings. If you want to evaluate them as integer or float, you must explicitely convert them.
@@ -107,7 +110,7 @@ optional arguments:
 With this command line you get the list of client IP addresses downloading files larger than 1MB
 ```
 path='.../2016_11_27_*/log_http_complete.gz'
-spark-submit --master yarn-client advanced_query.py -i $path -o "domain_rank" \
+spark-submit --master yarn-cluster advanced_query.py -i $path -o "domain_rank" \
              --filter= "method == 'HTTP' and int(fields[7])>5000" --map="c_ip" \
              --distinct
 ```
@@ -117,7 +120,7 @@ Thus, to get the fields in the HTTP response lines, you must use the indexed acc
 This query creates the list of Server IP address that are contacted using the QUIC protocol over UDP.
 ```
 path='.../2016_11_27_*/log_udp_complete.gz'
-spark-submit --master yarn-client advanced_query.py -i $path -o "quic_s_ip" \
+spark-submit --master yarn-cluster advanced_query.py -i $path -o "quic_s_ip" \
              --filter="c_type=='27' and s_type=='27'" --map="s_ip" \
              --distinct
 ```
@@ -125,7 +128,7 @@ spark-submit --master yarn-client advanced_query.py -i $path -o "quic_s_ip" \
 This example counts how many flow are directed to each domain (FQDN).
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
-spark-submit --master yarn-client advanced_query.py -i $path -o "domain_pop" \
+spark-submit --master yarn-cluster advanced_query.py -i $path -o "domain_pop" \
              --filter="fqdn!='-'" --map="(fqdn,1)" \
              --reduceByKey="v1+v2"
 ```
@@ -135,7 +138,7 @@ This examples calculates the rank of the domain names in the log. The rank is th
 accessing a domain.
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
-spark-submit --master yarn-client advanced_query.py -i $path -o "domain_rank" \
+spark-submit --master yarn-cluster advanced_query.py -i $path -o "domain_rank" \
              --filter="fqdn!='-'" --map="(fqdn,{c_ip})" \
              --reduceByKey="v1|v2" --finalMap="k + ' ' + str(len(v))"
 ```
