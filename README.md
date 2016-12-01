@@ -28,6 +28,22 @@ A simple query is the easiest operation you can do on log files.
 It takes as input a set of log files and selects a subset of the lines to be written as output using a configurable filter.
 The syntax is as follows:
 ```
+simple_query.py [-h] [-i input] [-o output] [-q query] [-s separator]
+                       [-l]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -i input, --input input
+                        Input log files path.
+  -o output, --output output
+                        Output file where the result of the query is written.
+  -q query, --query query
+                        Python expression to select a specific line.
+  -s separator, --separator separator
+                        Separator field in log files, in letters. Can be
+                        space|tab. Default is space.
+  -l, --copy_to_local   Copy the result file in the local file system.
+
 ```
 The query argument can be any combination of column names of the selected log file such as: c_ip, s_ip, fqdn, c_pkts_all, etc...
 It must use a python-like syntax and must return a Boolean value
