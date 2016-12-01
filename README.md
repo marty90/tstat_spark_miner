@@ -74,6 +74,34 @@ Three kinds of workflows are allowed.
 * Filter -> Map -> Reduce
 * Filter -> Map -> ReduceByKey ( -> Map)
 
+The command line syntax is:
+```
+advanced_query.py [-h] [-i input] [-o output] [--filter filter]
+                         [--map map] [--distinct] [--reduce reduce]
+                         [--reduceByKey reduceByKey] [--finalMap finalMap]
+                         [--separator separator] [-l]
+optional arguments:
+  -h, --help            show this help message and exit
+  -i input, --input input
+                        Input log files path.
+  -o output, --output output
+                        Output file where the result of the query is written.
+  --filter filter       Filter input log lines (Python expression).
+  --map map             Map each line after filter (Python expression).
+  --distinct            Get distinct elements after map (Python expression).
+  --reduce reduce       Reduce after map. Implicit arguments are v1 and v2.
+                        (Python expression).
+  --reduceByKey reduceByKey
+                        ReduceByKey after map. Implicit arguments are v1 and
+                        v2. (Python expression).
+  --finalMap finalMap   Map stage after ReduceByKey. Implicit arguments are k
+                        for the key and v for the value. (Python expression).
+  --separator separator
+                        Separator field in log files, in letters. Can be
+                        space|tab. Default is space.
+  -l, --copy_to_local   Copy the result file in the local file system.
+```
+
 ## 4.1 Examples
 ### 4.1.2 Server IPs contacted with QUIC protocol
 This query creates the list of Server IP address that are contacted using the QUIC protocol over UDP.
