@@ -49,13 +49,14 @@ The query argument can be any combination of column names of the selected log fi
 It must use a python-like syntax and must return a Boolean value
 
 ### 3.1 Examples
+#### 4.1.3 Log lines to Facebook
 To select all the lines in the tcp_complete log where the FQDN is `www.facebook.com`, you can type:
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
 spark-submit  --master yarn-client advanced_query.py -i $path -o "facebook_flows" \
               --query="fqdn=='www.facebook.com'"
 ```
-
+#### 4.1.3 HTTP requests to port 7547
 To select all the urls on server port 7547, you can use:
 ```
 path='.../2016_11_27_*/log_http_complete.gz'
@@ -72,6 +73,14 @@ Three kinds of workflows are allowed.
 * Filter -> Map -> ReduceByKey ( -> Map)
 
 ### 4.1 Examples
+#### 4.1.2 Server IPs contacted with QUIC protocol
+This query creates the list of Server IP address that are contacted using the QUIC protocol over UDP.
+```
+path='.../2016_11_27_*/log_udp_complete.gz'
+spark-submit --master yarn-client advanced_query.py -i $path -o "domain_rank" \
+             --filter="c_type=='27' and s_type=='27'" --map="s_ip" \
+             --distinct
+```
 #### 4.1.3 Domain Popularity
 This example counts how many flow are directed to each domain (FQDN).
 ```
