@@ -29,7 +29,7 @@ def main():
     
     # Create config to connect with the cluster
     conf = (SparkConf()
-             .setAppName("Classifier - Core Domains Discovery")
+             .setAppName("Tstat Spark Miner - Advanced Query")
              .set("spark.dynamicAllocation.enabled", "false")
              .set("spark.task.maxFailures", 128)
              .set("spark.yarn.max.executor.failures", 128)
