@@ -110,7 +110,7 @@ def main():
             
     if mode == "reduce":
         _reduce_lambda = eval('lambda v1,v2: ' + reduce_func)
-        log = sc.parallelize( log_mapped.reduce(_reduce_lambda) )  
+        log = sc.parallelize( [ log_mapped.reduce(_reduce_lambda) ] )  
         
     if mode == "reduceByKey":
         _reduce_lambda = eval('lambda v1,v2: ' + reduceByKey_func)
