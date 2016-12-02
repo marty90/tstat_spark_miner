@@ -117,7 +117,7 @@ def main():
         if finalMap_func!="":
             _map_lambda = eval('lambda (k,v): ' + finalMap_func)
         else:
-            _map_lambda = lambda (k,v): str (k) + " " + str (v)
+            _map_lambda = lambda (k,v): safe_str (k) + " " + safe_str (v)
         log = log_mapped.reduceByKey(_reduce_lambda).map ( _map_lambda )
         
     call ("hdfs dfs -rm -r " + output_file, shell=True)
@@ -151,6 +151,9 @@ def mapLog(lines):
                     yield _mapped
             except:
                 pass
+
+def safe_str (string):
+    return str ( unicode(string).encode('utf-8') )
 
 if __name__ == "__main__":
     main()
