@@ -142,3 +142,11 @@ spark-submit --master yarn-cluster advanced_query.py -i $path -o "domain_rank" \
              --filter="fqdn!='-'" --map="(fqdn,{c_ip})" \
              --reduceByKey="v1|v2" --finalMap="k + ' ' + str(len(v))"
 ```
+### 4.1.5 Average Flow size
+This command line calculates the average flow size of facebook.com subdomains.
+```
+path='.../2016_11_27_*/log_tcp_complete.gz'
+spark-submit --master yarn-cluster advanced_query.py -i $path -o "average_size" \
+--filter "'facebook.com' in fqdn" --map "(fqdn,(int(s_bytes_uniq),1))" \
+--reduceByKey "(v1[0] + v2[0], v1[1] + v2[1])" --finalMap "k + ' ' + str(v[0]/v[1])"
+```
