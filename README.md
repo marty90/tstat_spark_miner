@@ -65,7 +65,7 @@ spark-submit  --master yarn-cluster advanced_query.py -i $path -o "facebook_flow
 To select all the urls on server port 7547, you can use:
 ```
 path='.../2016_11_27_*/log_http_complete.gz'
-spark-submit  --master yarn-cluster advanced_query.py -i $path -o "port_7547" \
+spark-submit  --master yarn-cluster advanced_query.py -i $path -o "port_7547" -s tab \
               --query="s_port=='7547'"
 ```
 Please note that all fields are strings. If you want to evaluate them as integer or float, you must explicitely convert them.
@@ -110,7 +110,7 @@ optional arguments:
 With this command line you get the list of client IP addresses downloading files larger than 1MB
 ```
 path='.../2016_11_27_*/log_http_complete.gz'
-spark-submit --master yarn-cluster advanced_query.py -i $path -o "domain_rank" \
+spark-submit --master yarn-cluster advanced_query.py -i $path -o "domain_rank" -s tab \
              --filter= "method == 'HTTP' and int(fields[7])>5000" --map="c_ip" \
              --distinct
 ```
