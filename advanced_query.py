@@ -128,6 +128,7 @@ def main():
 def mapLog(lines):
     global filter_func
     global map_func
+    global separator
     
     line_number=0
     filter_compiled=compile( "_result=" + filter_func, '<string>', 'exec')

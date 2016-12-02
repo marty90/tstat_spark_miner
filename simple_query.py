@@ -64,6 +64,8 @@ def main():
     
 def mapLog(lines):
     global query
+    global separator
+    
     line_number=0
     query_compiled=compile( "result=" + query, '<string>', 'exec')
     for line in lines:
