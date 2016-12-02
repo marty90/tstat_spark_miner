@@ -136,10 +136,10 @@ def mapLog(lines):
         line_number += 1
         if line_number==1:
             line_new = line.split("#")[-1]
-            fields = [ x.split(":")[0] for x in line_new.split()]
+            fields = [ x.split(":")[0] for x in line_new.split(separator)]
             byte_codes = [ compile( f + "=elem", '<string>', 'exec') for f in fields ]
         else:
-            fields = line.split()
+            fields = line.split(separator)
             for i, elem in enumerate (fields):
                 if i<len(byte_codes):
                     exec byte_codes[i]
