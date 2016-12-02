@@ -1,18 +1,18 @@
 # Tstat-Spark-Miner
-This tool allows to perform simple queries to a Spark based cluster where Tstat log files are stored.
+This tool allows to perform simple queries to a *Spark* based cluster where *Tstat* log files are stored.
 
 # 1. Description
-This tool allows to run simple queries in a Spark cluster on Tstat log files.
+This tool allows to run simple queries in a *Spark* cluster if *Tstat* log files are stored.
 It instruments jobs coming from a predefined set of possible workflows.
-The aim of Tstat-Spark-Miner is to provide a simple command-line tool to extract simple analytics from Tstat log files.
-Please read somthing about [Spark](http://spark.apache.org/) and [Tstat](http://tstat.polito.it).
+The aim of *Tstat-Spark-Miner* is to provide a command-line tool to extract simple analytics from *Tstat* log files.
+Please read something about [Spark](http://spark.apache.org/) and [Tstat](http://tstat.polito.it).
 
 For information about this Readme file and this tool please write to
 [martino.trevisan@polito.it](mailto:martino.trevisan@polito.it)
 
 # 2. Prerequisites
-To use this tool you need a Spark cluster and a storage source (local or hdfs) where some Tstat log file is store.
-You need to be authenticated on the cluster; when using Kerberos authentication, just run:
+To use this tool you need a *Spark* cluster and a storage source (local or hdfs) where some *Tstat* log file is store.
+You need to be authenticated on the cluster; when using *Kerberos* authentication, just run:
 ```
 kinit
 ```
@@ -22,16 +22,21 @@ Please download locally this tool with this command line:
 ```
 git clone https://github.com/marty90/tstat_spark_miner
 ```
-You must run this Spark application with the spark-submit tool.
+You must run this *Spark* application with the spark-submit tool.
 Please rember to set the `--master` option in the correct way;
-it can be yarn-client or yarn-cluster. Note that when using yarn-cluster, you cannot copy files on your local machine.
+it can be `yarn-client` or `yarn-cluster`. Note that when using `yarn-cluster`, you **cannot** copy files on your local machine.
+By default *Tstat-Spark-Miner* stores the result of a query on the `hdfs` file system.
+With `-l` option, the result is saved on the local file system too; this is allowed only in `yarn-client` mode.
+
+This tool heavily uses `eval` and `exec` *python builtins*; so, be careful when writing your command line.
+All arguments must be python expressions; if you are not familiar with *python* (2.7), please read [something](https://docs.python.org/2/).
 
 # 3. Running a simple query
 A simple query is the easiest operation you can do on log files.
 It takes as input a set of log files and selects a subset of the lines to be written as output using a configurable filter.
 The syntax is as follows:
 ```
-simple_query.py [-h] [-i input] [-o output] [-q query] [-s separator]
+spark-submit simple_query.py [-h] [-i input] [-o output] [-q query] [-s separator]
                        [-l]
 
 optional arguments:
@@ -48,38 +53,39 @@ optional arguments:
   -l, --copy_to_local   Copy the result file in the local file system.
 
 ```
-The query argument can be any combination of column names of the selected log file such as: c_ip, s_ip, fqdn, c_pkts_all, etc...
+The query argument can be any combination of column names of the selected log file such as: `c_ip`, `s_ip`, `fqdn`, `c_pkts_all`, etc...
 The fields of the log files are accesible also using the fields variable which is a simple list of fields:
-e.g., fields[0] is the c_ip in the log_tcp_complete while fields[6] is the Hostname in the log_http_complete.
-It must use a python-like syntax and must return a Boolean value.
+e.g., `fields[0]` is the `c_ip` in the *log_tcp_complete* while `fields[6]` is the `hostname` in the *log_http_complete*.
+It must use a *python*-like syntax and must return a *Boolean* value.
 
 ## 3.1 Examples
 ### 3.1.1 Log lines to Facebook
-To select all the lines in the tcp_complete log where the FQDN is `www.facebook.com`, you can type:
+To select all the lines in the tcp_complete log where the *FQDN* is `www.facebook.com`, you can type:
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
-spark-submit  --master yarn-cluster advanced_query.py -i $path -o "facebook_flows" \
+spark-submit  advanced_query.py -i $path -o "facebook_flows" \
               --query="fqdn=='www.facebook.com'"
 ```
 ### 3.1.2 HTTP requests to port 7547
 To select all the urls on server port 7547, you can use:
 ```
 path='.../2016_11_27_*/log_http_complete.gz'
-spark-submit  --master yarn-cluster advanced_query.py -i $path -o "port_7547" -s tab \
+spark-submit  advanced_query.py -i $path -o "port_7547" -s tab \
               --query="s_port=='7547'"
 ```
 Please note that all fields are strings. If you want to evaluate them as integer or float, you must explicitely convert them.
 
 # 4. Running an advanced query
-This kind of query is more complex than the previous one since it includes a filter a map and a reduce stage.
+This kind of query is more complex than the previous one since it includes a *filter*, a *map* and a *reduce* transformation.
+Optionally, you can specify a second map transformation if you use *ReduceByKey* that will be executed after the latter.
 Three kinds of workflows are allowed.
-* Filter -> Map -> Distinct
-* Filter -> Map -> Reduce
-* Filter -> Map -> ReduceByKey ( -> Map)
+* *Filter* -> *Map* -> *Distinct*
+* *Filter* -> *Map* -> *Reduce*
+* *Filter* -> *Map* -> *ReduceByKey* ( -> *Map*)
 
 The command line syntax is:
 ```
-advanced_query.py [-h] [-i input] [-o output] [--filter filter]
+spark-submit advanced_query.py [-h] [-i input] [-o output] [--filter filter]
                          [--map map] [--distinct] [--reduce reduce]
                          [--reduceByKey reduceByKey] [--finalMap finalMap]
                          [--separator separator] [-l]
@@ -110,7 +116,7 @@ optional arguments:
 With this command line you get the list of client IP addresses downloading files larger than 1MB
 ```
 path='.../2016_11_27_*/log_http_complete.gz'
-spark-submit --master yarn-cluster advanced_query.py -i $path -o "domain_rank" -s tab \
+spark-submit  advanced_query.py -i $path -o "domain_rank" -s tab \
              --filter= "method == 'HTTP' and int(fields[7])>5000" --map="c_ip" \
              --distinct
 ```
@@ -120,15 +126,15 @@ Thus, to get the fields in the HTTP response lines, you must use the indexed acc
 This query creates the list of Server IP address that are contacted using the QUIC protocol over UDP.
 ```
 path='.../2016_11_27_*/log_udp_complete.gz'
-spark-submit --master yarn-cluster advanced_query.py -i $path -o "quic_s_ip" \
+spark-submit advanced_query.py -i $path -o "quic_s_ip" \
              --filter="c_type=='27' and s_type=='27'" --map="s_ip" \
              --distinct
 ```
 ### 4.1.3 Domain Popularity
-This example counts how many flow are directed to each domain (FQDN).
+This example counts how many flow are directed to each domain (*FQDN*).
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
-spark-submit --master yarn-cluster advanced_query.py -i $path -o "domain_pop" \
+spark-submit advanced_query.py -i $path -o "domain_pop" \
              --filter="fqdn!='-'" --map="(fqdn,1)" \
              --reduceByKey="v1+v2"
 ```
@@ -138,7 +144,7 @@ This examples calculates the rank of the domain names in the log. The rank is th
 accessing a domain.
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
-spark-submit --master yarn-cluster advanced_query.py -i $path -o "domain_rank" \
+spark-submit advanced_query.py -i $path -o "domain_rank" \
              --filter="fqdn!='-'" --map="(fqdn,{c_ip})" \
              --reduceByKey="v1|v2" --finalMap="k + ' ' + str(len(v))"
 ```
@@ -146,7 +152,7 @@ spark-submit --master yarn-cluster advanced_query.py -i $path -o "domain_rank" \
 This command line calculates the average flow size of facebook.com subdomains.
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
-spark-submit --master yarn-cluster advanced_query.py -i $path -o "average_size" \
---filter "'facebook.com' in fqdn" --map "(fqdn,(int(s_bytes_uniq),1))" \
---reduceByKey "(v1[0] + v2[0], v1[1] + v2[1])" --finalMap "k + ' ' + str(v[0]/v[1])"
+spark-submit  advanced_query.py -i $path -o "average_size" \
+              --filter "'facebook.com' in fqdn" --map "(fqdn,(int(s_bytes_uniq),1))" \
+              --reduceByKey "(v1[0] + v2[0], v1[1] + v2[1])" --finalMap "k + ' ' + str(v[0]/v[1])"
 ```
