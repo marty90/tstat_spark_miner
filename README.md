@@ -11,7 +11,7 @@ For information about this Readme file and this tool please write to
 [martino.trevisan@polito.it](mailto:martino.trevisan@polito.it)
 
 # 2. Prerequisites
-# 2.1 Getting Started
+## 2.1 Getting Started
 To use this tool you need a *Spark* cluster and a storage source (local or hdfs) where some *Tstat* log file is store.
 You need to be authenticated on the cluster; when using *Kerberos* authentication, just run:
 ```
@@ -23,7 +23,7 @@ Please download locally this tool with this command line:
 ```
 git clone https://github.com/marty90/tstat_spark_miner
 ```
-# 2.2 Driver allocation
+## 2.2 Driver allocation
 
 You must run this *Spark* application with the spark-submit tool.
 Please rember to set the `--master` option in the correct way;
@@ -34,10 +34,10 @@ By default *Tstat-Spark-Miner* stores the result of a query on the `hdfs` file s
 With `-l` option, the result is saved on the local file system too;
 for obvious reasons, this is allowed only in `yarn-client` mode.
 
-# 2.3 Input path specification
+## 2.3 Input path specification
 The input path for log files will be given as input to the Spark environment;
 therefore it can contain wildcards (\*) and expansions (in *bash-like* syntax, e.g., `log_\{1,2\}` will be expanded in `log_1` and `log_2` ).
-The path can refer to HDFS files and in this case it will be something like the following (it includes all *log_tcp_complete* in November 2016):
+The path can refer to *HDFS* files and in this case it will be something like the following (it includes all *log_tcp_complete* in November 2016):
 ```
 hdfs://BigDataHA/data/DET/POLI/2016/11-Nov/2016_11_*/log_tcp_complete.gz
 ```
@@ -46,7 +46,7 @@ It can refer to the local file system as well (when running the driver locally),
 file:///<absolute_path_to_files>
 ```
 
-# 2.4 Expression syntax
+## 2.4 Expression syntax
 This tool heavily uses `eval` and `exec` *python builtins*; so, be careful when writing your command line.
 All arguments must be python expressions; if you are not familiar with *python* (2.7), please read [something](https://docs.python.org/2/).
 
