@@ -64,14 +64,14 @@ It must use a *python*-like syntax and must return a *Boolean* value.
 To select all the lines in the tcp_complete log where the *FQDN* is `www.facebook.com`, you can type:
 ```
 path='.../2016_11_27_*/log_tcp_complete.gz'
-spark-submit  advanced_query.py -i $path -o "facebook_flows" \
+spark-submit  simple_query.py -i $path -o "facebook_flows" \
               --query="fqdn=='www.facebook.com'"
 ```
 ### 3.1.2 HTTP requests to port 7547
 To select all the urls on server port 7547, you can use:
 ```
 path='.../2016_11_27_*/log_http_complete.gz'
-spark-submit  advanced_query.py -i $path -o "port_7547" -s tab \
+spark-submit  simple_query.py -i $path -o "port_7547" -s tab \
               --query="s_port=='7547'"
 ```
 Please note that all fields are strings. If you want to evaluate them as integer or float, you must explicitely convert them.
