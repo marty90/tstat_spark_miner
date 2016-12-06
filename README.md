@@ -113,7 +113,7 @@ spark-submit  simple_query.py -i $path -o "facebook_flows" \
 ### 3.1.2 HTTP requests to port 7547
 To select all the urls on server port 7547, you can use:
 ```
-path='hdfs://.../2016_11_27_*/log_tcp_complete.gz'
+path='hdfs://.../2016_11_27_*/log_http_complete.gz'
 spark-submit  simple_query.py -i $path -o "port_7547" -s tab \
               --query "s_port=='7547'"
 ```
@@ -159,7 +159,7 @@ optional arguments:
 ### 4.1.1 Clients downloading large HTTP files
 With this command line you get the list of client IP addresses downloading files larger than 1MB
 ```
-path='hdfs://.../2016_11_27_*/log_tcp_complete.gz'
+path='hdfs://.../2016_11_27_*/log_http_complete.gz'
 spark-submit  advanced_query.py -i $path -o "domain_rank" -s tab \
              --filter "method == 'HTTP' and int(fields[7])>5000" --map="c_ip" \
              --distinct
@@ -169,7 +169,7 @@ Thus, to get the fields in the HTTP response lines, you must use the indexed acc
 ### 4.1.2 Server IPs contacted with QUIC protocol
 This query creates the list of Server IP address that are contacted using the QUIC protocol over UDP.
 ```
-path='hdfs://.../2016_11_27_*/log_tcp_complete.gz'
+path='hdfs://.../2016_11_27_*/log_udp_complete.gz'
 spark-submit advanced_query.py -i $path -o "quic_s_ip" \
              --filter "c_type=='27' and s_type=='27'" \
              --map "s_ip" \
