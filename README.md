@@ -31,9 +31,10 @@ With `-l` option, the result is saved on the local file system too; this is allo
 This tool heavily uses `eval` and `exec` *python builtins*; so, be careful when writing your command line.
 All arguments must be python expressions; if you are not familiar with *python* (2.7), please read [something](https://docs.python.org/2/).
 
-# 3. Running a simple query
+# 3. Running a simple query (select specific lines)
 A simple query is the easiest operation you can do on log files.
-It takes as input a set of log files and selects a subset of the lines to be written as output using a configurable filter.
+It takes as input a set of log files and **selects a subset of the lines** to be written as output using a configurable filter.
+The selected lines will be written in the output with all their fields.
 The syntax is as follows:
 ```
 spark-submit simple_query.py [-h] [-i input] [-o output] [-q query] [-s separator]
@@ -75,7 +76,7 @@ spark-submit  advanced_query.py -i $path -o "port_7547" -s tab \
 ```
 Please note that all fields are strings. If you want to evaluate them as integer or float, you must explicitely convert them.
 
-# 4. Running an advanced query
+# 4. Running an advanced query (map + reduce)
 This kind of query is more complex than the previous one since it includes a *filter*, a *map* and a *reduce* transformation.
 Optionally, you can specify a second map transformation if you use *ReduceByKey* that will be executed after the latter.
 Three kinds of workflows are allowed.
