@@ -77,7 +77,7 @@ spark-submit  advanced_query.py -i $path -o "port_7547" -s tab \
 Please note that all fields are strings. If you want to evaluate them as integer or float, you must explicitely convert them.
 
 # 4. Running an advanced query (map + reduce)
-This kind of query is more complex than the previous one since it includes a *filter*, a *map* and a *reduce* transformation.
+This kind of query is more complex than the previous one since it **includes a *filter*, a *map* and a *reduce* transformation.**
 Optionally, you can specify a second map transformation if you use *ReduceByKey* that will be executed after the latter.
 Three kinds of workflows are allowed.
 * *Filter* -> *Map* -> *Distinct*
