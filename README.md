@@ -1,6 +1,26 @@
 # Tstat-Spark-Miner
 This tool allows to perform simple queries to a *Spark* based cluster where *Tstat* log files are stored.
 
+## Index
+[comment]: <> (Done with https://github.com/ekalinin/github-markdown-toc )
+   * [1. Description](#1-description)
+   * [2. Prerequisites](#2-prerequisites)
+      * [2.1 Getting Started](#21-getting-started)
+      * [2.2 Driver allocation](#22-driver-allocation)
+      * [2.3 Input path specification](#23-input-path-specification)
+      * [2.4 Expression syntax](#24-expression-syntax)
+   * [3. Running a simple query (select specific lines)](#3-running-a-simple-query-select-specific-lines)
+      * [3.1 Examples](#31-examples)
+         * [3.1.1 Log lines to Facebook](#311-log-lines-to-facebook)
+         * [3.1.2 HTTP requests to port 7547](#312-http-requests-to-port-7547)
+   * [4. Running an advanced query (map   reduce)](#4-running-an-advanced-query-map--reduce)
+      * [4.1 Examples](#41-examples)
+         * [4.1.1 Clients downloading large HTTP files](#411-clients-downloading-large-http-files)
+         * [4.1.2 Server IPs contacted with QUIC protocol](#412-server-ips-contacted-with-quic-protocol)
+         * [4.1.3 Domain Popularity](#413-domain-popularity)
+         * [4.1.4 Domain Rank](#414-domain-rank)
+         * [4.1.5 Average Flow size](#415-average-flow-size)
+         
 # 1. Description
 This tool allows to run simple queries in a *Spark* cluster if *Tstat* log files are stored.
 It instruments jobs coming from a predefined set of possible workflows.
