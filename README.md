@@ -2,7 +2,10 @@
 This tool allows to perform simple queries to a *Spark* based cluster where *Tstat* log files are stored.
 
 ## Index
-[comment]: <> (Done with https://github.com/ekalinin/github-markdown-toc )
+<!---
+Done with https://github.com/ekalinin/github-markdown-toc )
+-->
+
    * [1. Description](#1-description)
    * [2. Prerequisites](#2-prerequisites)
       * [2.1 Getting Started](#21-getting-started)
