@@ -84,14 +84,14 @@ To select all the lines in the tcp_complete log where the *FQDN* is `www.faceboo
 ```
 path='hdfs://.../2016_11_27_*/log_tcp_complete.gz'
 spark-submit  simple_query.py -i $path -o "facebook_flows" \
-              --query="fqdn=='www.facebook.com'"
+              --query "fqdn=='www.facebook.com'"
 ```
 ### 3.1.2 HTTP requests to port 7547
 To select all the urls on server port 7547, you can use:
 ```
 path='hdfs://.../2016_11_27_*/log_tcp_complete.gz'
 spark-submit  simple_query.py -i $path -o "port_7547" -s tab \
-              --query="s_port=='7547'"
+              --query "s_port=='7547'"
 ```
 Please note that all fields are strings. If you want to evaluate them as integer or float, you must explicitely convert them.
 
@@ -137,7 +137,7 @@ With this command line you get the list of client IP addresses downloading files
 ```
 path='hdfs://.../2016_11_27_*/log_tcp_complete.gz'
 spark-submit  advanced_query.py -i $path -o "domain_rank" -s tab \
-             --filter= "method == 'HTTP' and int(fields[7])>5000" --map="c_ip" \
+             --filter "method == 'HTTP' and int(fields[7])>5000" --map="c_ip" \
              --distinct
 ```
 Please note that so far, the tool uses the first line of each log as header line.
@@ -147,7 +147,8 @@ This query creates the list of Server IP address that are contacted using the QU
 ```
 path='hdfs://.../2016_11_27_*/log_tcp_complete.gz'
 spark-submit advanced_query.py -i $path -o "quic_s_ip" \
-             --filter="c_type=='27' and s_type=='27'" --map="s_ip" \
+             --filter "c_type=='27' and s_type=='27'" \
+             --map "s_ip" \
              --distinct
 ```
 ### 4.1.3 Domain Popularity
@@ -155,8 +156,9 @@ This example counts how many flow are directed to each domain (*FQDN*).
 ```
 path='hdfs://.../2016_11_27_*/log_tcp_complete.gz'
 spark-submit advanced_query.py -i $path -o "domain_pop" \
-             --filter="fqdn!='-'" --map="(fqdn,1)" \
-             --reduceByKey="v1+v2"
+             --filter "fqdn!='-'" \
+             --map "(fqdn,1)" \
+             --reduceByKey "v1+v2"
 ```
 
 ### 4.1.4 Domain Rank
@@ -165,14 +167,18 @@ accessing a domain.
 ```
 path='hdfs://.../2016_11_27_*/log_tcp_complete.gz'
 spark-submit advanced_query.py -i $path -o "domain_rank" \
-             --filter="fqdn!='-'" --map="(fqdn,{c_ip})" \
-             --reduceByKey="v1|v2" --finalMap="k + ' ' + str(len(v))"
+             --filter "fqdn!='-'" \
+             --map "(fqdn,{c_ip})" \
+             --reduceByKey "v1|v2" \
+             --finalMap "k + ' ' + str(len(v))"
 ```
 ### 4.1.5 Average Flow size
 This command line calculates the average flow size of facebook.com subdomains.
 ```
 path='hdfs://.../2016_11_27_*/log_tcp_complete.gz'
 spark-submit  advanced_query.py -i $path -o "average_size" \
-              --filter "'facebook.com' in fqdn" --map "(fqdn,(int(s_bytes_uniq),1))" \
-              --reduceByKey "(v1[0] + v2[0], v1[1] + v2[1])" --finalMap "k + ' ' + str(v[0]/v[1])"
+              --filter "'facebook.com' in fqdn" \
+              --map "(fqdn,(int(s_bytes_uniq),1))" \
+              --reduceByKey "(v1[0] + v2[0], v1[1] + v2[1])"
+              --finalMap "k + ' ' + str(v[0]/v[1])"
 ```
