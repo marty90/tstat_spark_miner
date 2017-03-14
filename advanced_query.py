@@ -115,9 +115,13 @@ def main():
     if mode == "reduceByKey":
         _reduce_lambda = eval('lambda v1,v2: ' + reduceByKey_func)
         if finalMap_func!="":
-            _map_lambda = eval('lambda (k,v): ' + finalMap_func)
+            def _map_lambda (t):
+                (k,v)=t
+                return eval(finalMap_func)
         else:
-            _map_lambda = lambda (k,v): safe_str (k) + " " + safe_str (v)
+            def _map_lambda (t):
+                (k,v)=t
+                return safe_str (k) + " " + safe_str (v)
         log = log_mapped.reduceByKey(_reduce_lambda).map ( _map_lambda )
         
     call ("hdfs dfs -rm -r " + output_file, shell=True)
@@ -131,29 +135,37 @@ def mapLog(lines):
     global separator
     
     line_number=0
-    filter_compiled=compile( "_result=" + filter_func, '<string>', 'exec')
-    map_compiled=compile( "_mapped=" + map_func, '<string>', 'exec')    
+    filter_compiled=compile( filter_func, '<string>', 'eval')
+    map_compiled=compile( map_func, '<string>', 'eval')    
     for line in lines:
         line_number += 1
         if line_number==1:
             line_new = line.split("#")[-1]
             fields = [ x.split(":")[0] for x in line_new.split(separator)]
-            byte_codes = [ compile( f + "=elem", '<string>', 'exec') for f in fields ]
+            fields_name=fields
+            #byte_codes = [ compile( f + "=elem", '<string>', 'exec') for f in fields ]
         else:
             fields = line.split(separator)
             for i, elem in enumerate (fields):
-                if i<len(byte_codes):
-                    exec byte_codes[i]
+                #if i<len(byte_codes):
+                    #exec (byte_codes[i])
+                if i<len(fields_name):    
+                    globals()[fields_name[i]]=elem
             try:
-                exec filter_compiled
+                _result= eval (filter_compiled)
+                #print (_result)
                 if _result:
-                    exec map_compiled
+                    _mapped = eval (map_compiled)
                     yield _mapped
-            except:
+            except Exception as e:
+                print (e)
                 pass
 
 def safe_str (string):
-    return str ( unicode(string).encode('utf-8') )
+    if (sys.version_info > (3, 0)):
+        return str(string)
+    else:
+        return str ( unicode(string).encode('utf-8') )
 
 if __name__ == "__main__":
     main()
