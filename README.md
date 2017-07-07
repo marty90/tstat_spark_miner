@@ -1,5 +1,6 @@
-# Tstat-Spark-Miner
-===================
+Tstat-Spark-Miner
+=================
+
 This tool allows to perform simple queries to a *Spark* based cluster where *Tstat* log files are stored.
 
 # Table of Content
