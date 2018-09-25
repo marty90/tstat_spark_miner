@@ -54,11 +54,15 @@ def main():
         print ("Invalid separator. Must be space|tab")
         return
 
-    log = sc.textFile(path).mapPartitions(mapLog)
-    
-    
+    log = sc.textFile(path)
+    header = log.first()
+    mapped = log.mapPartitions(mapLog)
+
+    header_rdd = sc.parallelize((header,))
+    mapped=header_rdd.union(mapped)
+
     call ("hdfs dfs -rm -r " + output_file, shell=True)
-    log.saveAsTextFile(output_file)
+    mapped.saveAsTextFile(output_file)
     if copy_to_local:
         call ("hdfs dfs -getmerge " + output_file + " " + output_file , shell=True)
     
@@ -67,24 +71,24 @@ def mapLog(lines):
     global separator
     
     line_number=0
-    query_compiled=compile( "result=" + query, '<string>', 'exec')
+    query_compiled=compile( query, '<string>', 'eval')
+    #print (query)
     for line in lines:
         line_number += 1
         if line_number==1:
             line_new = line.split("#")[-1]
-            fields = [ x.split(":")[0] for x in line_new.split(separator)]
-            byte_codes = [ compile( f + "=elem", '<string>', 'exec') for f in fields ]
+            field_names = [ x.split(":")[0] for x in line_new.split(separator)]
         else:
             fields = line.split(separator)
             for i, elem in enumerate (fields):
-                if i<len(byte_codes):
-                    exec byte_codes[i]
+                if i<len(field_names):
+                    globals()[field_names[i]]=elem
             try:
-                exec query_compiled
+                result = eval( query_compiled )
                 if result:
                     yield line
-            except:
-                pass
+            except Exception as e:
+                print (e)
 
 if __name__ == "__main__":
     main()
